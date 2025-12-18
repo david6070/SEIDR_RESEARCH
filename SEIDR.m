@@ -1,9 +1,9 @@
 %% ========================================================================
 % MAIN CODE - SCRIPT STARTS HERE
 % ========================================================================
-% SEIDR Model: Verification and Analysis Code for Tables 3 and 4
-% Author: [Your Name]
-% Date: [Current Date]
+% SEIDR Model: Verification and Analysis Code for Tables and Plots
+% Author: DAVID OLUTUNDE DANIEL
+% Date: 12-18-2025
 % Description: This code verifies and confirms all numerical results
 % presented in Tables 3 and 4 of the manuscript.
 
@@ -565,6 +565,299 @@ text(1, cost_benefit_ratio*0.5, sprintf('CBR = %.2f', cost_benefit_ratio), ...
     'Color', 'white');
 
 sgtitle('SEIDR Model Performance Summary', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% ========================================================================
+% 9. EVOLUTION OVER TIME - DYNAMIC PLOTS
+% ========================================================================
+fprintf('\n9. Generating evolution over time plots...\n');
+
+%% Figure 8: Evolution of All Compartments Over Time (3D Surface Plot)
+figure('Position', [100, 100, 1400, 500], 'Name', 'Figure 8: Evolution Over Time');
+
+% Subplot 1: No Control Evolution
+subplot(1,2,1);
+[X, Y] = meshgrid(t, 1:5);
+Z = [S_nc; E_nc; I_nc; D_nc; R_nc];
+surf(X, Y, Z, 'EdgeColor', 'none', 'FaceAlpha', 0.8);
+colormap(jet);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Compartment', 'FontSize', 12, 'FontWeight', 'bold');
+zlabel('Population', 'FontSize', 12, 'FontWeight', 'bold');
+title('No Control: Evolution Over Time', 'FontSize', 14, 'FontWeight', 'bold');
+set(gca, 'YTick', 1:5);
+set(gca, 'YTickLabel', {'S', 'E', 'I', 'D', 'R'});
+view(45, 30);
+grid on; box on;
+colorbar;
+caxis([0 max(Z(:))]);
+
+% Subplot 2: Optimal Control Evolution
+subplot(1,2,2);
+Z_oc = [S_oc; E_oc; I_oc; D_oc; R_oc];
+surf(X, Y, Z_oc, 'EdgeColor', 'none', 'FaceAlpha', 0.8);
+colormap(jet);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Compartment', 'FontSize', 12, 'FontWeight', 'bold');
+zlabel('Population', 'FontSize', 12, 'FontWeight', 'bold');
+title('Optimal Control: Evolution Over Time', 'FontSize', 14, 'FontWeight', 'bold');
+set(gca, 'YTick', 1:5);
+set(gca, 'YTickLabel', {'S', 'E', 'I', 'D', 'R'});
+view(45, 30);
+grid on; box on;
+colorbar;
+caxis([0 max(Z_oc(:))]);
+
+sgtitle('3D Evolution of Population Compartments Over Time', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Figure 9: Temporal Evolution - Heatmaps
+figure('Position', [100, 100, 1400, 600], 'Name', 'Figure 9: Temporal Heatmaps');
+
+% Subplot 1: No Control Heatmap
+subplot(1,2,1);
+heatmap_data_nc = [S_nc; E_nc; I_nc; D_nc; R_nc];
+imagesc(t, 1:5, heatmap_data_nc);
+colormap(jet);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Compartment', 'FontSize', 12, 'FontWeight', 'bold');
+title('No Control: Population Heatmap', 'FontSize', 14, 'FontWeight', 'bold');
+set(gca, 'YTick', 1:5);
+set(gca, 'YTickLabel', {'S', 'E', 'I', 'D', 'R'});
+colorbar;
+caxis([0 max(heatmap_data_nc(:))]);
+
+% Subplot 2: Optimal Control Heatmap
+subplot(1,2,2);
+heatmap_data_oc = [S_oc; E_oc; I_oc; D_oc; R_oc];
+imagesc(t, 1:5, heatmap_data_oc);
+colormap(jet);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Compartment', 'FontSize', 12, 'FontWeight', 'bold');
+title('Optimal Control: Population Heatmap', 'FontSize', 14, 'FontWeight', 'bold');
+set(gca, 'YTick', 1:5);
+set(gca, 'YTickLabel', {'S', 'E', 'I', 'D', 'R'});
+colorbar;
+caxis([0 max(heatmap_data_oc(:))]);
+
+sgtitle('Temporal Evolution Heatmaps', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Figure 10: Evolution of Ratios and Proportions
+figure('Position', [100, 100, 1400, 500], 'Name', 'Figure 10: Ratio Evolution');
+
+% Calculate ratios
+I_ratio_nc = I_nc ./ (S_nc + E_nc + I_nc + D_nc + R_nc);
+D_ratio_nc = D_nc ./ (S_nc + E_nc + I_nc + D_nc + R_nc);
+R_ratio_nc = R_nc ./ (S_nc + E_nc + I_nc + D_nc + R_nc);
+
+I_ratio_oc = I_oc ./ (S_oc + E_oc + I_oc + D_oc + R_oc);
+D_ratio_oc = D_oc ./ (S_oc + E_oc + I_oc + D_oc + R_oc);
+R_ratio_oc = R_oc ./ (S_oc + E_oc + I_oc + D_oc + R_oc);
+
+% Subplot 1: Stressed Ratio Evolution
+subplot(1,3,1);
+plot(t, I_ratio_nc*100, 'r--', 'LineWidth', 2); hold on;
+plot(t, I_ratio_oc*100, 'b-', 'LineWidth', 2);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Stressed Ratio (%)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Stressed Population Ratio', 'FontSize', 14, 'FontWeight', 'bold');
+legend('No Control', 'Optimal Control', 'Location', 'best', 'FontSize', 10);
+grid on; box on;
+set(gca, 'FontSize', 11);
+ylim([0, 100]);
+
+% Subplot 2: Strained Ratio Evolution
+subplot(1,3,2);
+plot(t, D_ratio_nc*100, 'r--', 'LineWidth', 2); hold on;
+plot(t, D_ratio_oc*100, 'b-', 'LineWidth', 2);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Strained Ratio (%)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Strained Population Ratio', 'FontSize', 14, 'FontWeight', 'bold');
+legend('No Control', 'Optimal Control', 'Location', 'best', 'FontSize', 10);
+grid on; box on;
+set(gca, 'FontSize', 11);
+ylim([0, 100]);
+
+% Subplot 3: Recovered Ratio Evolution
+subplot(1,3,3);
+plot(t, R_ratio_nc*100, 'r--', 'LineWidth', 2); hold on;
+plot(t, R_ratio_oc*100, 'b-', 'LineWidth', 2);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Recovered Ratio (%)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Recovered Population Ratio', 'FontSize', 14, 'FontWeight', 'bold');
+legend('No Control', 'Optimal Control', 'Location', 'best', 'FontSize', 10);
+grid on; box on;
+set(gca, 'FontSize', 11);
+ylim([0, 100]);
+
+sgtitle('Population Ratio Evolution Over Time', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Figure 11: Cumulative Evolution - Area Plots
+figure('Position', [100, 100, 1400, 500], 'Name', 'Figure 11: Cumulative Evolution');
+
+% Subplot 1: No Control Cumulative Areas
+subplot(1,2,1);
+area(t, [S_nc; E_nc; I_nc; D_nc; R_nc]');
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Population', 'FontSize', 12, 'FontWeight', 'bold');
+title('No Control: Cumulative Population', 'FontSize', 14, 'FontWeight', 'bold');
+legend('Susceptible', 'Exposed', 'Stressed', 'Strained', 'Recovered', ...
+    'Location', 'best', 'FontSize', 10);
+grid on; box on;
+set(gca, 'FontSize', 11);
+
+% Subplot 2: Optimal Control Cumulative Areas
+subplot(1,2,2);
+area(t, [S_oc; E_oc; I_oc; D_oc; R_oc]');
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Population', 'FontSize', 12, 'FontWeight', 'bold');
+title('Optimal Control: Cumulative Population', 'FontSize', 14, 'FontWeight', 'bold');
+legend('Susceptible', 'Exposed', 'Stressed', 'Strained', 'Recovered', ...
+    'Location', 'best', 'FontSize', 10);
+grid on; box on;
+set(gca, 'FontSize', 11);
+
+sgtitle('Cumulative Population Evolution (Area Plots)', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Figure 12: Rate of Change Evolution
+figure('Position', [100, 100, 1400, 500], 'Name', 'Figure 12: Rate of Change');
+
+% Calculate rates of change (derivatives)
+dI_nc = gradient(I_nc, dt);
+dD_nc = gradient(D_nc, dt);
+dI_oc = gradient(I_oc, dt);
+dD_oc = gradient(D_oc, dt);
+
+% Subplot 1: Stressed Rate of Change
+subplot(1,2,1);
+plot(t, dI_nc, 'r--', 'LineWidth', 2); hold on;
+plot(t, dI_oc, 'b-', 'LineWidth', 2);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Rate of Change (dI/dt)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Stressed Population Rate of Change', 'FontSize', 14, 'FontWeight', 'bold');
+legend('No Control', 'Optimal Control', 'Location', 'best', 'FontSize', 10);
+grid on; box on;
+set(gca, 'FontSize', 11);
+% Add zero line with text separately
+hold on;
+yline(0, 'k--', 'LineWidth', 1);
+text(t(end)*0.9, 0.1, 'Zero Line', 'FontSize', 10, 'Color', 'k');
+
+% Subplot 2: Strained Rate of Change
+subplot(1,2,2);
+plot(t, dD_nc, 'r--', 'LineWidth', 2); hold on;
+plot(t, dD_oc, 'b-', 'LineWidth', 2);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Rate of Change (dD/dt)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Strained Population Rate of Change', 'FontSize', 14, 'FontWeight', 'bold');
+legend('No Control', 'Optimal Control', 'Location', 'best', 'FontSize', 10);
+grid on; box on;
+set(gca, 'FontSize', 11);
+% Add zero line with text separately
+hold on;
+yline(0, 'k--', 'LineWidth', 1);
+text(t(end)*0.9, 0.01, 'Zero Line', 'FontSize', 10, 'Color', 'k');
+
+sgtitle('Rate of Change Evolution Over Time', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Figure 13: Phase Space Evolution
+figure('Position', [100, 100, 1400, 500], 'Name', 'Figure 13: Phase Space');
+
+% Subplot 1: I vs D Phase Space
+subplot(1,2,1);
+plot(I_nc, D_nc, 'r--', 'LineWidth', 2); hold on;
+plot(I_oc, D_oc, 'b-', 'LineWidth', 2);
+scatter(I_nc(1), D_nc(1), 100, 'go', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+scatter(I_nc(end), D_nc(end), 100, 'ro', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+scatter(I_oc(1), D_oc(1), 100, 'go', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+scatter(I_oc(end), D_oc(end), 100, 'bo', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+xlabel('Stressed Population (I)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Strained Population (D)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Phase Space: I vs D', 'FontSize', 14, 'FontWeight', 'bold');
+legend('No Control Trajectory', 'Optimal Control Trajectory', ...
+    'Start (t=0)', 'End No Control', 'Start (t=0)', 'End Optimal Control', ...
+    'Location', 'best', 'FontSize', 9);
+grid on; box on;
+set(gca, 'FontSize', 11);
+
+% Subplot 2: I vs S Phase Space
+subplot(1,2,2);
+plot(I_nc, S_nc, 'r--', 'LineWidth', 2); hold on;
+plot(I_oc, S_oc, 'b-', 'LineWidth', 2);
+scatter(I_nc(1), S_nc(1), 100, 'go', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+scatter(I_nc(end), S_nc(end), 100, 'ro', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+scatter(I_oc(1), S_oc(1), 100, 'go', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+scatter(I_oc(end), S_oc(end), 100, 'bo', 'filled', 'MarkerEdgeColor', 'k', 'LineWidth', 2);
+xlabel('Stressed Population (I)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Susceptible Population (S)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Phase Space: I vs S', 'FontSize', 14, 'FontWeight', 'bold');
+legend('No Control Trajectory', 'Optimal Control Trajectory', ...
+    'Start (t=0)', 'End No Control', 'Start (t=0)', 'End Optimal Control', ...
+    'Location', 'best', 'FontSize', 9);
+grid on; box on;
+set(gca, 'FontSize', 11);
+
+sgtitle('Phase Space Trajectories', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Figure 14: Control Impact Evolution
+figure('Position', [100, 100, 1400, 500], 'Name', 'Figure 14: Control Impact');
+
+% Calculate control effectiveness metrics
+control_effectiveness = zeros(1, length(t));
+for i = 1:length(t)
+    if I_nc(i) > 0
+        control_effectiveness(i) = (I_nc(i) - I_oc(i)) / I_nc(i) * 100;
+    else
+        control_effectiveness(i) = 0;
+    end
+end
+
+% Subplot 1: Control Effectiveness Over Time
+subplot(1,2,1);
+plot(t, control_effectiveness, 'g-', 'LineWidth', 2);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Control Effectiveness (%)', 'FontSize', 12, 'FontWeight', 'bold');
+title('Control Effectiveness Over Time', 'FontSize', 14, 'FontWeight', 'bold');
+grid on; box on;
+set(gca, 'FontSize', 11);
+ylim([0, 100]);
+% Add mean line - FIXED: Use line() instead of yline() with text
+hold on;
+mean_value = mean(control_effectiveness);
+line([t(1), t(end)], [mean_value, mean_value], 'Color', 'r', 'LineStyle', '--', 'LineWidth', 2);
+text(t(end)*0.7, mean_value+5, sprintf('Mean: %.1f%%', mean_value), ...
+    'FontSize', 11, 'Color', 'r', 'FontWeight', 'bold');
+legend('Effectiveness', 'Mean', 'Location', 'best', 'FontSize', 10);
+
+% Subplot 2: Cumulative Stress Reduction
+subplot(1,2,2);
+cumulative_reduction = cumsum(I_nc - I_oc) * dt;
+plot(t, cumulative_reduction, 'm-', 'LineWidth', 2);
+xlabel('Time (days)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Cumulative Stress Reduction', 'FontSize', 12, 'FontWeight', 'bold');
+title('Cumulative Stress Reduction', 'FontSize', 14, 'FontWeight', 'bold');
+grid on; box on;
+set(gca, 'FontSize', 11);
+% Add total reduction - FIXED: Use line() instead of yline() with text
+hold on;
+total_value = cumulative_reduction(end);
+line([t(1), t(end)], [total_value, total_value], 'Color', 'r', 'LineStyle', '--', 'LineWidth', 2);
+text(t(end)*0.7, total_value*1.05, sprintf('Total: %.1f', total_value), ...
+    'FontSize', 11, 'Color', 'r', 'FontWeight', 'bold');
+legend('Cumulative Reduction', 'Total', 'Location', 'best', 'FontSize', 10);
+
+sgtitle('Control Impact Evolution Over Time', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Update display summary
+fprintf('\n   Added 7 evolution over time figures:\n');
+fprintf('   ------------------------------------\n');
+fprintf('   Figure 8: 3D Evolution Surface Plots\n');
+fprintf('   Figure 9: Temporal Heatmaps\n');
+fprintf('   Figure 10: Ratio Evolution\n');
+fprintf('   Figure 11: Cumulative Area Plots\n');
+fprintf('   Figure 12: Rate of Change\n');
+fprintf('   Figure 13: Phase Space Trajectories\n');
+fprintf('   Figure 14: Control Impact Evolution\n\n');
+
+fprintf('   Now showing dynamic evolution of the system over time.\n');
 
 %% ========================================================================
 % 10. SUMMARY AND VERIFICATION
